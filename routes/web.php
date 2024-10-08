@@ -24,3 +24,5 @@ Route::resource('products', ProductController::class)->except('show');
 Route::get('products/import/index', [MasterController::class, 'importProductIndex'])->name('importProductIndex');
 Route::post('products/import', [MasterController::class, 'importProduct'])->name('importProduct');
 Route::get('products/export', [MasterController::class, 'exportProduct'])->name('exportProduct');
+Route::get('products/sale', [MasterController::class, 'sale'])->name('sale');
+Route::get('products/saleId-change', [MasterController::class, 'saleIdChange'])->name('saleIdChange');
