@@ -8,6 +8,7 @@ use App\Imports\ProductsImport;
 use PhpParser\Node\Expr\FuncCall;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 
 class MasterController extends Controller
 {
@@ -45,33 +46,35 @@ class MasterController extends Controller
             array_push($data, array_combine($escapedHeader, $columns));
         }
 
+        return $data;
         return $this->saleAdd($data);
         // return $this->saleProductAdd($data);
 
     }
 
     private function saleAdd($sales){
+        // return $sales;
         // $sponsorshipCheck = [];
         foreach($sales as $sale){
             $salesById = DB::table('product_sales')
-                ->select('sale_id', 'created_at', DB::raw('SUM(total) as total_price'), DB::raw('SUM(qty) as qty_sum'), DB::raw('SUM(discount) as total_discount'))
+                ->select('sale_id', 'created_at', DB::raw('SUM(total) as total_price'), DB::raw('SUM(qty) as qty_sum'), DB::raw('SUM(subsidy) as total_discount'))
                 ->groupBy('sale_id', 'created_at')
                 ->where('sale_id', $sale['saleinv'])
                 ->first();
 
-            $pay = $salesById->total_price;
             $subsidy_amount = $salesById->total_discount;
-            $total_price = $salesById->total_price + $salesById->total_discount;
+            $total_price = $salesById->total_price;
+            $grand_total = $total_price - $subsidy_amount;
 
+            $paid_amount = $sale['cashone'] + $sale['cashtwo'];
 
             $sponsorshipData = $this->sponsorshipCheck($sale);
             // array_push($sponsorshipCheck, $a);
-            $paid_amount =  $sale['cashone'] + $sale['cashtwo'];
 
             $date = \DateTime::createFromFormat('d/m/Y', $sale['date']);
 
             if ($date) {
-                $date->setTime(4, 0, 50);
+                // $date->setTime(4, 0, 50);
                 $formattedDate = $date->format('Y-m-d H:i:s');
             } else {
                 $formattedDate = date('Y-m-d H:i:s'); // Use current date-time as a fallback
@@ -81,18 +84,19 @@ class MasterController extends Controller
                 'reference_no' => $sale['saleinv'],
                 'sales_date' => $formattedDate,
                 'financial_year_id' => 1,
-                'patient_id' => 1,
+                'patient_id' => $sale['ptid'],
                 'user_id' => 1,
                 'warehouse_id' => 1,
                 'item' => 0,
                 'total_qty' => $salesById->qty_sum,
+                'subsidy_amount' => $subsidy_amount,
                 'order_discount' => 0,
                 'total_discount' => 0,
                 'sponsorship_id' => $sponsorshipData[1],
                 'sponsorship_amount' => $sponsorshipData[0],
                 'total_price' => $total_price,
-                'grand_total' => $pay,
-                'paid_amount' => $paid_amount,
+                'grand_total' => $grand_total,
+                'paid_amount' => $sponsorshipData[1] ? $sponsorshipData[0] : $paid_amount,
                 'sale_status' => 1,
                 'payment_status' => 1,
             ]);
@@ -121,12 +125,13 @@ class MasterController extends Controller
 
     //TODO Sale Produc
     private function saleProductAdd($products){
-        return 'Ok';
+        // return count($products);
+        $rAllData = [];
         foreach($products as $product){
-            $date = \DateTime::createFromFormat('d/m/Y', $product['postdt']);
+            $date = \DateTime::createFromFormat('d/m/Y', $product['saledate']);
 
             if ($date) {
-                $date->setTime(4,0,50);
+                // $date->setTime(4,0,50);
                 $formattedDate = $date->format('Y-m-d H:i:s');
             } else {
                 $formattedDate = date('Y-m-d H:i:s'); // Use current date-time as a fallback
@@ -136,6 +141,23 @@ class MasterController extends Controller
 
             $total = $product['ttlprice'] - $discount;
 
+
+            // $rData = [
+            //     'sale_id' => $product['saleinv'],
+            //     'purchase_id' => 0,
+            //     'product_id' => $product['itemid'],
+            //     'qty' => $product['quantity'],
+            //     'sale_unit_id' => 1,
+            //     'product_purchase_price' => 1,
+            //     'product_sell_price' => $product['unitrate'],
+            //     'subsidy' => $product['mswsubsid'],
+            //     'total' => $product['ttlprice'],
+            //     'created_at' => $formattedDate,
+            // ];
+
+            // array_push($rAllData, $rData);
+
+
             DB::table('product_sales')->insert([
                 'sale_id' => $product['saleinv'],
                 'purchase_id' => 0,
@@ -144,16 +166,27 @@ class MasterController extends Controller
                 'sale_unit_id' =>1,
                 'product_purchase_price' => 1,
                 'product_sell_price' => $product['unitrate'],
-                'discount' => $product['mswsubsid'],
-                'total' => $total,
+                'subsidy' => $product['mswsubsid'],
+                'total' => $product['ttlprice'],
                 'created_at' => $formattedDate,
             ]);
         }
+
+        // Insert data into the product_sales table
+        // DB::table('product_sales')->insert($rAllData);
+        return "done";
+        // return $rAllData;
+        // return count($rAllData);
     }
 
 
     public function saleIdChange(){
-        $sales = DB::table('sales')->get();
+        return "ok";
+        $sales = DB::table('sales')
+        ->skip(0)
+        ->take(1)
+        ->get();
+
         foreach($sales as $sale){
             $product_sales = DB::table('product_sales')->where('sale_id', $sale->reference_no)->get();
             foreach($product_sales as $product){
@@ -162,7 +195,8 @@ class MasterController extends Controller
                 ]);
             }
         }
-        return $sales;
+
+        return "done 1300-1700";
     }
 
     public function exportProduct()
