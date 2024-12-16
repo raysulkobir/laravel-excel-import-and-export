@@ -2,16 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Exports\ProductsExport;
 use App\Imports\ProductsImport;
 use PhpParser\Node\Expr\FuncCall;
+use App\Services\VicidialServices;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use Carbon\Carbon;
 
 class MasterController extends Controller
 {
+    protected $vicidialServices;
+    
+    public function __construct(VicidialServices $vicidialServices)
+    {
+        $this->vicidialServices = $vicidialServices;
+    }
     public function importProductIndex()
     {
         return view('products.import');
@@ -46,8 +53,8 @@ class MasterController extends Controller
             array_push($data, array_combine($escapedHeader, $columns));
         }
 
-        return $data;
-        return $this->saleAdd($data);
+        // return $data;
+        return $this->vicidialServices->mongoData($data);
         // return $this->saleProductAdd($data);
 
     }
