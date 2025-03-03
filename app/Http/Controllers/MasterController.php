@@ -3,18 +3,20 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Exports\ProductsExport;
 use App\Imports\ProductsImport;
 use PhpParser\Node\Expr\FuncCall;
 use App\Services\VicidialServices;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\DB;
 
 class MasterController extends Controller
 {
     protected $vicidialServices;
-    
+
     public function __construct(VicidialServices $vicidialServices)
     {
         $this->vicidialServices = $vicidialServices;
@@ -26,43 +28,192 @@ class MasterController extends Controller
 
     public function importProduct(Request $request)
     {
+        // $jsonFilePath = public_path('db/supreem_court_bar_association.json');
+        // $jsonFilePath = public_path('db/institute_of_engineers.json');
+        $jsonFilePath = public_path('db/chittrong-district-bar-association.json');
 
-        $upload = $request->file('file');
-        $ext = pathinfo($upload->getClientOriginalName(), PATHINFO_EXTENSION);
-        if ($ext != 'csv')
-        return redirect()->back()->with('not_permitted', 'Please upload a CSV file');
-        $filename =  $upload->getClientOriginalName();
-        $filePath = $upload->getRealPath();
-        $file = fopen($filePath, 'r');
-        $header = fgetcsv($file);
-        $escapedHeader = [];
-        //validate
-        foreach ($header as $key => $value) {
-            $lheader = strtolower($value);
-            $escapedItem = preg_replace('/[^a-z]/', '', $lheader);
-            array_push($escapedHeader, $escapedItem);
+        // Check if the file exists
+        if (!File::exists($jsonFilePath)) {
+            return response()->json(['error' => 'File not found'], 404);
         }
 
-        $data = [];
-        while ($columns = fgetcsv($file)) {
-            if ($columns[0] == "")
-                continue;
-            foreach ($columns as $key => $value) {
-                $value = preg_replace('/\D/', '', $value);
-            }
-            array_push($data, array_combine($escapedHeader, $columns));
-        }
+        // Read the JSON file
+        $jsonContent = File::get($jsonFilePath);
 
+        // Decode JSON to an associative array
+        $data = json_decode($jsonContent, true);
+
+        // Return JSON response
+        // return $this->supreem_court_bar_association($data);
+        // return $this->institute_of_engineers($data);
+        return $this->chittrong_district_bar_association($data);
         // return $data;
-        return $this->vicidialServices->mongoData($data);
-        // return $this->saleProductAdd($data);
-
     }
 
-    private function saleAdd($sales){
+
+    public function chittrong_district_bar_association($data)
+    {
+        // return $data;
+        // Begin a database transaction
+        DB::beginTransaction();
+
+        try {
+            $chunkSize = 100;
+            $chunks = array_chunk($data, $chunkSize);
+
+            foreach ($chunks as $chunk) {
+                $insertData = [];
+
+                foreach ($chunk as $d) {
+                    if (!empty($d['name'])) {
+                        $insertData[] = [
+                            'type' => 'institute_of_engineers',
+                            'memberId' => $d['memberId'],
+                            'memberName' => $d['memberName'],
+                            'spouseName' => $d['spouseName'],
+                            'fatherName' => $d['fatherName'],
+                            'motherName' => $d['motherName'],
+                            'mobile' => $d['mobile'],
+                            'email' => $d['email'],
+                            'linNo' => $d['linNo'],
+                            'picture' => $d['picture'],
+                            'dateOfBirth' => $d['dateOfBirth'],
+                            'nid' => $d['nid'],
+                            'bloodGroup' => $d['bloodGroup'],
+                            'maritalStatus' => $d['maritalStatus'],
+                            'religion' => $d['religion'],
+                            'presentAddress' => $d['presentAddress'],
+                            'parmanentAddress' => $d['parmanentAddress'],
+                            'chamberAddress' => $d['chamberAddress'],
+                            'status' => $d['status'],
+                            'barDateOfEnrollment' => $d['barDateOfEnrollment'],
+                            'barCourtType' => $d['barCourtType'],
+                            'sanadNo' => $d['sanadNo'],
+                    
+                        ];
+                    }
+                }
+
+                Product::insert($insertData);  // Bulk insert
+            }
+
+            // Commit the transaction
+            DB::commit();
+        } catch (\Exception $e) {
+            // Rollback the transaction if something goes wrong
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+
+        return "okdd";
+    }
+    public function institute_of_engineers($data)
+    {
+        // Begin a database transaction
+        DB::beginTransaction();
+
+        try {
+            $chunkSize = 100;
+            $chunks = array_chunk($data, $chunkSize);
+
+            foreach ($chunks as $chunk) {
+                $insertData = [];
+
+                foreach ($chunk as $d) {
+                    if (!empty($d['name'])) {
+                        $insertData[] = [
+                            'type' => 'institute_of_engineers',
+                            'name' => $d['name'],
+                            'address' => $d['address'],
+                            'email' => $d['email'],
+                            'division' => $d['division'],
+                            'center' => $d['center'],
+                            'institution' => $d['institution'],
+                            'passingYear' => $d['passingYear'],
+                            'membershipNo' => $d['membershipNo'],
+                            'imageSrc' => $d['imageSrc'],
+                            'mobile' => $d['mobile'],
+                    
+                        ];
+                    }
+                }
+
+                Product::insert($insertData);  // Bulk insert
+                // return __LINE__;
+            }
+
+            // Commit the transaction
+            DB::commit();
+        } catch (\Exception $e) {
+            // Rollback the transaction if something goes wrong
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+
+        return "ok";
+    }
+    
+    public function supreem_court_bar_association($data)
+    {
+        // Begin a database transaction
+        DB::beginTransaction();
+
+        try {
+            $chunkSize = 100;
+            $chunks = array_chunk($data, $chunkSize);
+
+            foreach ($chunks as $chunk) {
+                $insertData = [];
+
+                foreach ($chunk as $d) {
+                    $insertData[] = [
+                        'type' => 'supreem_court_bar_association',
+                        'memberId' => $d['memberId'],
+                        'memberName' => $d['memberName'],
+                        'spouseName' => $d['spouseName'],
+                        'fatherName' => $d['fatherName'],
+                        'motherName' => $d['motherName'],
+                        'mobile' => $d['mobile'],
+                        'email' => $d['email'],
+                        'picture' => $d['picture'],
+                        'dateOfBirth' => $d['dateOfBirth'],
+                        'nid' => $d['nid'],
+                        'bloodGroup' => $d['bloodGroup'],
+                        'maritalStatus' => $d['maritalStatus'],
+                        'religion' => $d['religion'],
+                        'presentAddress' => isset($d['presentAddress']) ? $d['presentAddress'] : '',
+                        'parmanentAddress' => isset($d['parmanentAddress']) ? $d['parmanentAddress'] : '',
+                        'chamberAddress' => $d['chamberAddress'],
+                        'status' => $d['status'],
+                        'barDateOfJoining' => $d['barDateOfJoining'],
+                        'barDateOfEnrollment' => $d['barDateOfEnrollment'],
+                        'barCourtType' => $d['barCourtType'],
+                        'starMark' => $d['starMark'],
+                        'chamberStatus' => $d['chamberStatus'],
+                    ];
+                }
+
+                Product::insert($insertData);  // Bulk insert
+            }
+
+            // Commit the transaction
+            DB::commit();
+        } catch (\Exception $e) {
+            // Rollback the transaction if something goes wrong
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+
+        return "ok";
+    }
+
+
+
+    private function saleAdd($sales)
+    {
         // return $sales;
         // $sponsorshipCheck = [];
-        foreach($sales as $sale){
+        foreach ($sales as $sale) {
             $salesById = DB::table('product_sales')
                 ->select('sale_id', 'created_at', DB::raw('SUM(total) as total_price'), DB::raw('SUM(qty) as qty_sum'), DB::raw('SUM(subsidy) as total_discount'))
                 ->groupBy('sale_id', 'created_at')
@@ -110,20 +261,21 @@ class MasterController extends Controller
         }
     }
 
-    private function sponsorshipCheck($sale){
+    private function sponsorshipCheck($sale)
+    {
         if ($sale['zakat'] > 0) {
             return [$sale['zakat'], 1];
-        }else if($sale['monowara'] > 0){
+        } else if ($sale['monowara'] > 0) {
             return [$sale['monowara'], 2];
-        }else if($sale['enosis'] > 0){
+        } else if ($sale['enosis'] > 0) {
             return [$sale['enosis'], 3];
-        }else if($sale['sponsor'] > 0){
+        } else if ($sale['sponsor'] > 0) {
             return [$sale['sponsor'], 4];
-        }else if($sale['poorfund'] > 0){
+        } else if ($sale['poorfund'] > 0) {
             return [$sale['poorfund'], 5];
-        }else if($sale['prenatal'] > 0){
+        } else if ($sale['prenatal'] > 0) {
             return [$sale['prenatal'], 6];
-        }else{
+        } else {
             return [0, 0];
         }
         return $sale;
@@ -131,10 +283,11 @@ class MasterController extends Controller
 
 
     //TODO Sale Produc
-    private function saleProductAdd($products){
+    private function saleProductAdd($products)
+    {
         // return count($products);
         $rAllData = [];
-        foreach($products as $product){
+        foreach ($products as $product) {
             $date = \DateTime::createFromFormat('d/m/Y', $product['saledate']);
 
             if ($date) {
@@ -170,7 +323,7 @@ class MasterController extends Controller
                 'purchase_id' => 0,
                 'product_id' => $product['itemid'],
                 'qty' => $product['quantity'],
-                'sale_unit_id' =>1,
+                'sale_unit_id' => 1,
                 'product_purchase_price' => 1,
                 'product_sell_price' => $product['unitrate'],
                 'subsidy' => $product['mswsubsid'],
@@ -187,16 +340,17 @@ class MasterController extends Controller
     }
 
 
-    public function saleIdChange(){
+    public function saleIdChange()
+    {
         return "ok";
         $sales = DB::table('sales')
-        ->skip(0)
-        ->take(1)
-        ->get();
+            ->skip(0)
+            ->take(1)
+            ->get();
 
-        foreach($sales as $sale){
+        foreach ($sales as $sale) {
             $product_sales = DB::table('product_sales')->where('sale_id', $sale->reference_no)->get();
-            foreach($product_sales as $product){
+            foreach ($product_sales as $product) {
                 DB::table('product_sales')->where('sale_id', $sale->reference_no)->update([
                     'sale_id' => $sale->id,
                 ]);
