@@ -53,28 +53,76 @@ return new class extends Migration
 
 
             //TODO chittrong_district_bar_association
-            $table->string('memberId')->nullable();
-            $table->string('memberName')->nullable();
-            $table->string('spouseName')->nullable();
-            $table->string('fatherName')->nullable();
-            $table->string('motherName')->nullable();
+            // $table->string('memberId')->nullable();
+            // $table->string('memberName')->nullable();
+            // $table->string('spouseName')->nullable();
+            // $table->string('fatherName')->nullable();
+            // $table->string('motherName')->nullable();
+            // $table->string('mobile')->nullable();
+            // $table->string('email')->nullable();
+            // $table->string('linNo')->nullable();
+            // $table->string('picture')->nullable();
+            // $table->string('dateOfBirth')->nullable();
+            // $table->string('nid')->nullable();
+            // $table->string('bloodGroup')->nullable();
+            // $table->string('maritalStatus')->nullable();
+            // $table->string('religion')->nullable();
+            // $table->text('presentAddress')->nullable();
+            // $table->text('parmanentAddress')->nullable();
+            // $table->text('chamberAddress')->nullable();
+            // $table->string('status')->nullable();
+            // $table->string('barDateOfEnrollment')->nullable();
+            // $table->string('barCourtType')->nullable();
+            // $table->string('sanadNo')->nullable();
+
+            //TODO bangladesh_Association_of_Publicly_Listed_Companies
+            // $table->string('web-scraper-order')->nullable();
+            // $table->string('web-scraper-start-url')->nullable();
+            // $table->string('cid')->nullable();
+            // $table->string('company_name')->nullable();
+            // $table->string('address')->nullable();
+            // $table->string('phone')->nullable();
+            // $table->string('link')->nullable();
+            // $table->string('link-href')->nullable();
+            // $table->string('contact_person')->nullable();
+            // $table->string('designation')->nullable();
+            // $table->string('phone1')->nullable();
+            // $table->string('mobile')->nullable();
+            // $table->string('fax')->nullable();
+            // $table->string('emails')->nullable();
+            // $table->string('website')->nullable();
+
+            //TODO Bangladesh_college_of_physician_and_surgeons
+
+            // $table->string('subject')->nullable();
+            // $table->string('fellow_id')->nullable();
+            // $table->string('year_of_fellowship')->nullable();
+            // $table->string('name')->nullable();
+            // $table->string('institute')->nullable();
+
+            //TODO dhaka_university_accounting_alumni
+            $table->string('web-scraper-orde')->nullable();
+            $table->string('web-scraper-start-url')->nullable();
+            $table->string('image-src')->nullable();
+            $table->string('name')->nullable();
+            $table->string('id_no')->nullable();
+            $table->string('batch')->nullable();
+            $table->string('designation')->nullable();
+            $table->string('orgnization')->nullable();
+            $table->string('link')->nullable();
+            $table->string('link-href')->nullable();
+            $table->string('name1')->nullable();
+            $table->string('designation1')->nullable();
+            $table->string('organization1')->nullable();
+            $table->string('address')->nullable();
+            $table->string('telephone_office')->nullable();
+            $table->string('telephone_res')->nullable();
             $table->string('mobile')->nullable();
             $table->string('email')->nullable();
-            $table->string('linNo')->nullable();
-            $table->string('picture')->nullable();
-            $table->string('dateOfBirth')->nullable();
-            $table->string('nid')->nullable();
-            $table->string('bloodGroup')->nullable();
-            $table->string('maritalStatus')->nullable();
-            $table->string('religion')->nullable();
-            $table->text('presentAddress')->nullable();
-            $table->text('parmanentAddress')->nullable();
-            $table->text('chamberAddress')->nullable();
-            $table->string('status')->nullable();
-            $table->string('barDateOfEnrollment')->nullable();
-            $table->string('barCourtType')->nullable();
-            $table->string('sanadNo')->nullable();
-
+            $table->string('date_of_birth')->nullable();
+            $table->string('no_of_children')->nullable();
+            $table->string('spouse_name')->nullable();
+            $table->string('blood_group')->nullable();
             $table->timestamps();
         });
     }

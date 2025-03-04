@@ -30,7 +30,12 @@ class MasterController extends Controller
     {
         // $jsonFilePath = public_path('db/supreem_court_bar_association.json');
         // $jsonFilePath = public_path('db/institute_of_engineers.json');
-        $jsonFilePath = public_path('db/chittrong-district-bar-association.json');
+        // $jsonFilePath = public_path('db/chittrong-district-bar-association.json');
+        // $jsonFilePath = public_path('db/Bangladesh-Association-of-Publicly-Listed-Companies-(BAPLC).json');
+        // $jsonFilePath = public_path('db/Bangladesh-college-of-physician-and-surgeons.json');
+        $jsonFilePath = public_path('db/dhaka-university-accounting-alumni1.json');
+ 
+ 
 
         // Check if the file exists
         if (!File::exists($jsonFilePath)) {
@@ -46,10 +51,151 @@ class MasterController extends Controller
         // Return JSON response
         // return $this->supreem_court_bar_association($data);
         // return $this->institute_of_engineers($data);
-        return $this->chittrong_district_bar_association($data);
+        // return $this->chittrong_district_bar_association($data);
+        // return $this->bangladesh_Association_of_Publicly_Listed_Companies($data['Sheet1']);
+        // return $this->Bangladesh_college_of_physician_and_surgeons($data);
+        return $this->dhaka_university_accounting_alumni($data);
         // return $data;
     }
 
+
+    public function dhaka_university_accounting_alumni($data)
+    {
+        // return $data;
+        // Begin a database transaction
+        DB::beginTransaction();
+
+        try {
+            $chunkSize = 100;
+            $chunks = array_chunk($data, $chunkSize);
+
+            foreach ($chunks as $chunk) {
+                $insertData = [];
+
+                foreach ($chunk as $d) {
+                    $insertData[] = [
+                        'type' => 'dhaka_university_accounting_alumni',
+                        'web-scraper-orde' => @$d['web-scraper-orde'],
+                        'web-scraper-start-url' => @$d['web-scraper-start-url'],
+                        'image-src' => @$d['image-src'],
+                        'id_no' => @$d['id_no'],
+                        'batch' => @$d['batch'],
+                        'designation' => @$d['designation'],
+                        'orgnization' => @$d['orgnization'],
+                        'link' => @$d['link'],
+                        'link-href' => @$d['link-href'],
+                        'name1' => @$d['name1'],
+                        'designation1' => @$d['designation1'],
+                        'organization1' => @$d['organization1'],
+                        'address' => @$d['address'],
+                        'telephone_office' => @$d['telephone_office'],
+                        'telephone_res' => @$d['telephone_res'],
+                        'mobile' => @$d['mobile'],
+                        'email' => @$d['email'],
+                        'name' => @$d['name'],
+                       
+                    ];
+
+                }
+                // return $insertData;
+                Product::insert($insertData);  // Bulk insert
+            }
+
+            // Commit the transaction
+            DB::commit();
+        } catch (\Exception $e) {
+            // Rollback the transaction if something goes wrong
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+
+        return "okdd";
+    }
+    public function Bangladesh_college_of_physician_and_surgeons($data)
+    {
+        // return $data;
+        // Begin a database transaction
+        DB::beginTransaction();
+
+        try {
+            $chunkSize = 100;
+            $chunks = array_chunk($data, $chunkSize);
+
+            foreach ($chunks as $chunk) {
+                $insertData = [];
+
+                foreach ($chunk as $d) {
+                    $insertData[] = [
+                        'type' => 'bangladesh_Association_of_Publicly_Listed_Companies',
+                        'subject' => @$d['subject'],
+                        'fellow_id' => @$d['fellow_id'],
+                        'year_of_fellowship' => @$d['year_of_fellowship'],
+                        'name' => @$d['name'],
+                        'institute' => @$d['institute'] ? $d['institute'] : '',
+                    ];
+
+                }
+                // return $insertData;
+                Product::insert($insertData);  // Bulk insert
+            }
+
+            // Commit the transaction
+            DB::commit();
+        } catch (\Exception $e) {
+            // Rollback the transaction if something goes wrong
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+
+        return "okdd";
+    }
+
+    public function bangladesh_Association_of_Publicly_Listed_Companies($data)
+    {
+        // return $data;
+        // Begin a database transaction
+        DB::beginTransaction();
+
+        try {
+            $chunkSize = 100;
+            $chunks = array_chunk($data, $chunkSize);
+
+            foreach ($chunks as $chunk) {
+                $insertData = [];
+
+                foreach ($chunk as $d) {
+                    $insertData[] = [
+                        'type' => 'bangladesh_Association_of_Publicly_Listed_Companies',
+                        'web-scraper-order' => $d['web-scraper-order'],
+                        'web-scraper-start-url' => $d['web-scraper-start-url'],
+                        'cid' => $d['cid'],
+                        'company_name' => $d['company_name'],
+                        'address' => $d['address'],
+                        'phone' => $d['phone'],
+                        'link' => $d['link'],
+                        'link-href' => $d['link-href'],
+                        'contact_person' => $d['contact_person'],
+                        'designation' => $d['designation'],
+                        'phone1' => $d['phone1'],
+                        'mobile' => $d['mobile'],
+                        'fax' => $d['fax'],
+                        'emails' => $d['emails'],
+                        'website' => $d['website'],
+                    ];
+                }
+                Product::insert($insertData);  // Bulk insert
+            }
+
+            // Commit the transaction
+            DB::commit();
+        } catch (\Exception $e) {
+            // Rollback the transaction if something goes wrong
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+
+        return "okdd";
+    }
 
     public function chittrong_district_bar_association($data)
     {
@@ -65,35 +211,31 @@ class MasterController extends Controller
                 $insertData = [];
 
                 foreach ($chunk as $d) {
-                    if (!empty($d['name'])) {
-                        $insertData[] = [
-                            'type' => 'institute_of_engineers',
-                            'memberId' => $d['memberId'],
-                            'memberName' => $d['memberName'],
-                            'spouseName' => $d['spouseName'],
-                            'fatherName' => $d['fatherName'],
-                            'motherName' => $d['motherName'],
-                            'mobile' => $d['mobile'],
-                            'email' => $d['email'],
-                            'linNo' => $d['linNo'],
-                            'picture' => $d['picture'],
-                            'dateOfBirth' => $d['dateOfBirth'],
-                            'nid' => $d['nid'],
-                            'bloodGroup' => $d['bloodGroup'],
-                            'maritalStatus' => $d['maritalStatus'],
-                            'religion' => $d['religion'],
-                            'presentAddress' => $d['presentAddress'],
-                            'parmanentAddress' => $d['parmanentAddress'],
-                            'chamberAddress' => $d['chamberAddress'],
-                            'status' => $d['status'],
-                            'barDateOfEnrollment' => $d['barDateOfEnrollment'],
-                            'barCourtType' => $d['barCourtType'],
-                            'sanadNo' => $d['sanadNo'],
-                    
-                        ];
-                    }
+                    $insertData[] = [
+                        'type' => 'chittrong-district-bar-association',
+                        'memberId' => $d['memberId'],
+                        'memberName' => $d['memberName'],
+                        'spouseName' => $d['spouseName'],
+                        'fatherName' => $d['fatherName'],
+                        'motherName' => $d['motherName'],
+                        'mobile' => $d['mobile'],
+                        'email' => $d['email'],
+                        'linNo' => $d['linNo'],
+                        'picture' => $d['picture'],
+                        'dateOfBirth' => $d['dateOfBirth'],
+                        'nid' => $d['nid'],
+                        'bloodGroup' => $d['bloodGroup'],
+                        'maritalStatus' => $d['maritalStatus'],
+                        'religion' => $d['religion'],
+                        'presentAddress' => $d['presentAddress'],
+                        'parmanentAddress' => $d['parmanentAddress'],
+                        'chamberAddress' => $d['chamberAddress'],
+                        'status' => $d['status'],
+                        'barDateOfEnrollment' => $d['barDateOfEnrollment'],
+                        'barCourtType' => $d['barCourtType'],
+                        'sanadNo' => $d['sanadNo'],
+                    ];
                 }
-
                 Product::insert($insertData);  // Bulk insert
             }
 
@@ -107,6 +249,7 @@ class MasterController extends Controller
 
         return "okdd";
     }
+
     public function institute_of_engineers($data)
     {
         // Begin a database transaction
