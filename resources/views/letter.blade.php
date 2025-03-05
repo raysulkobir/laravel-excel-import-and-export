@@ -80,6 +80,11 @@
 <body>
     <div class="label">
         @php
+        function removed($d) {
+            $data = preg_replace('/(CELL:\s*\d{5}-\d{6},?\s*)|(TEL:\s*\d{6},?\s*)|(\d{5}-\d{6})/', '', $d);
+            return trim($data); // Remove any extra spaces left after replacement
+        }
+
             $i = 0;   
         @endphp
         @foreach ($data as $index => $d)
@@ -88,7 +93,7 @@
         @endphp
             <div class="recipient">
                 <p><strong>{{ $d->memberName }}</strong></p>
-                <p>{{ $d->presentAddress }}</p>
+                <p>{{ removed($d->presentAddress) }}</p>
             </div>
 
             @if ($i == 18) 

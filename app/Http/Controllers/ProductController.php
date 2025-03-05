@@ -11,8 +11,8 @@ class ProductController extends Controller
 
     public function letter(){
         $data = DB::table('supreem_court_bar_association')
-            ->offset(1) 
-            ->limit(32)
+            ->offset(0) 
+            ->limit(16)
             ->get();
 
         return view('letter', compact('data'));
