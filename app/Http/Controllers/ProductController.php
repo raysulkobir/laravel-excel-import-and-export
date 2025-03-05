@@ -4,9 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
+
+    public function letter(){
+        $data = DB::table('supreem_court_bar_association')
+            ->offset(1) 
+            ->limit(32)
+            ->get();
+
+        return view('letter', compact('data'));
+    }
     /**
      * Display a listing of the resource.
      */

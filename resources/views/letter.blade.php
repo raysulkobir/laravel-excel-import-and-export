@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mailing Label</title>
+    <style>
+        /* Set page size to A4 for printing */
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .label {
+            /* Adjust width to fit the page */
+            width: 900px;
+            /* Set a maximum width for the label */
+            /* border: 2px solid black; */
+            /* padding: 15px; */
+            margin: 0 auto;
+            /* Center the label on the page */
+            text-align: left;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 10px;
+        }
+
+        .recipient {
+            margin-top: 5px;
+            padding: 0 10px;
+            /* margin: 5px; */
+            border: 1px dotted black;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+         /* Ensure page break works */
+        .page-break {
+            page-break-before: always;  /* Ensures new page starts */
+            display: block;
+            width: 100%;
+            height: 0px;  /* Prevents unwanted spacing */
+        }
+
+ 
+
+        /* For printing only */
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+
+            .label {
+                margin: 0;
+                padding: 2mm;
+                /* Adjust padding for print */
+            }
+            /* Ensure proper page breaks */
+.page-break {
+    page-break-before: always; /* Older browsers */
+    break-before: page; /* Modern browsers */
+    display: block;
+    width: 100%;
+    height: 0px; /* Prevents unwanted extra space */
+    clear: both;
+}
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="label">
+        @php
+            $i = 0;   
+        @endphp
+        @foreach ($data as $index => $d)
+        @php
+            $i++;
+        @endphp
+            <div class="recipient">
+                <p><strong>{{ $d->memberName }}</strong></p>
+                <p>{{ $d->presentAddress }}</p>
+            </div>
+
+            @if ($i == 18) 
+                @php
+                    $i = 0;
+                @endphp
+                <div class="page-break"></div> 
+            @endif
+        @endforeach
+    </div>
+
+</body>
+
+</html>

@@ -20,6 +20,7 @@ Route::get('/', function () {
 });
 
 Route::resource('products', ProductController::class)->except('show');
+Route::get('letter', [ProductController::class, 'letter'])->name('letter');
 
 Route::get('products/import/index', [MasterController::class, 'importProductIndex'])->name('importProductIndex');
 Route::post('products/import', [MasterController::class, 'importProduct'])->name('importProduct');
