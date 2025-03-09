@@ -29,11 +29,12 @@ class MasterController extends Controller
     public function importProduct(Request $request)
     {
         // $jsonFilePath = public_path('db/supreem_court_bar_association.json');
-        // $jsonFilePath = public_path('db/institute_of_engineers.json');
+        $jsonFilePath = public_path('db/institute_of_engineers.json');
         // $jsonFilePath = public_path('db/chittrong-district-bar-association.json');
         // $jsonFilePath = public_path('db/Bangladesh-Association-of-Publicly-Listed-Companies-(BAPLC).json');
         // $jsonFilePath = public_path('db/Bangladesh-college-of-physician-and-surgeons.json');
-        $jsonFilePath = public_path('db/dhaka-university-accounting-alumni1.json');
+        // $jsonFilePath = public_path('db/dhaka-university-accounting-alumni1.json');
+        // $jsonFilePath = public_path('db/economist_association.json');
  
  
 
@@ -50,14 +51,65 @@ class MasterController extends Controller
 
         // Return JSON response
         // return $this->supreem_court_bar_association($data);
-        // return $this->institute_of_engineers($data);
+        return $this->institute_of_engineers($data);
         // return $this->chittrong_district_bar_association($data);
         // return $this->bangladesh_Association_of_Publicly_Listed_Companies($data['Sheet1']);
         // return $this->Bangladesh_college_of_physician_and_surgeons($data);
-        return $this->dhaka_university_accounting_alumni($data);
+        // return $this->dhaka_university_accounting_alumni($data);
+        // return $this->economist_association($data);
         // return $data;
     }
 
+
+
+    public function economist_association($data)
+    {
+        // return $data;
+        // Begin a database transaction
+        DB::beginTransaction();
+
+        try {
+            $chunkSize = 100;
+            $chunks = array_chunk($data, $chunkSize);
+
+            foreach ($chunks as $chunk) {
+                $insertData = [];
+
+                foreach ($chunk as $d) {
+                    $insertData[] = [
+                        'type' => 'economist_association',
+                        'web-scraper-order' => @$d['web-scraper-order'],
+                        'web-scraper-start-url' => @$d['web-scraper-start-url'],
+                        'photo-src' => @$d['photo-src'],
+                        'name' => @$d['name'],
+                        'occupation' => @$d['occupation'],
+                        'contact' => @$d['contact'],
+                        'link' => @$d['link'],
+                        'link-href' => @$d['link-href'],
+                        'Membership Number' => @$d['Membership Number'] ? @$d['Membership Number'] : '',
+                        'Name1' => @$d['Name1'],
+                        'Blood Group' => @$d['Blood Group'],
+                        'Mailing Address' => @$d['Mailing Address'] ? $d['Mailing Address'] : '',
+                        'Mobile Number' => @$d['Mobile Number'],
+                        'E-mail ID' => @$d['E-mail ID'],
+                        'Education' => @$d['Education'],
+                    ];
+
+                }
+                // return $insertData;
+                Product::insert($insertData);  // Bulk insert
+            }
+
+            // Commit the transaction
+            DB::commit();
+        } catch (\Exception $e) {
+            // Rollback the transaction if something goes wrong
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+
+        return "okdd";
+    }
 
     public function dhaka_university_accounting_alumni($data)
     {
@@ -111,6 +163,7 @@ class MasterController extends Controller
 
         return "okdd";
     }
+
     public function Bangladesh_college_of_physician_and_surgeons($data)
     {
         // return $data;
@@ -252,6 +305,7 @@ class MasterController extends Controller
 
     public function institute_of_engineers($data)
     {
+        // return $data;
         // Begin a database transaction
         DB::beginTransaction();
 

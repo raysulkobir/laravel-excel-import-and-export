@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mailing Label</title>
+    <title>www.thals.org</title>
     <style>
         /* Set page size to A4 for printing */
         @page {
@@ -18,7 +18,7 @@
 
         .label {
             /* Adjust width to fit the page */
-            width: 900px;
+            width: 600px;
             /* Set a maximum width for the label */
             /* border: 2px solid black; */
             /* padding: 15px; */
@@ -26,15 +26,14 @@
             /* Center the label on the page */
             text-align: left;
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-gap: 10px;
+        
         }
 
         .recipient {
-            margin-top: 5px;
+            margin-top: 100px;
+            margin-left:150px; 
             padding: 0 10px;
             /* margin: 5px; */
-            border: 1px dotted black;
         }
 
         .bold {
@@ -56,6 +55,7 @@
             body {
                 margin: 0;
                 padding: 0;
+                margin: 0 auto;
             }
 
             .label {
@@ -64,14 +64,14 @@
                 /* Adjust padding for print */
             }
             /* Ensure proper page breaks */
-.page-break {
-    page-break-before: always; /* Older browsers */
-    break-before: page; /* Modern browsers */
-    display: block;
-    width: 100%;
-    height: 0px; /* Prevents unwanted extra space */
-    clear: both;
-}
+        .page-break {
+            page-break-before: always; /* Older browsers */
+            break-before: page; /* Modern browsers */
+            display: block;
+            width: 100%;
+            height: 0px; /* Prevents unwanted extra space */
+            clear: both;
+        }
 
         }
     </style>
@@ -81,25 +81,31 @@
     <div class="label">
         @php
         function removed($d) {
+            // Remove the phone numbers (CELL, TEL, or any phone number like 01719-687726)
             $data = preg_replace('/(CELL:\s*\d{5}-\d{6},?\s*)|(TEL:\s*\d{6},?\s*)|(\d{5}-\d{6})/', '', $d);
+            
+            // Remove the trailing comma, if there is one, at the end of the string
+            $data = rtrim($data, ','); 
+
             return trim($data); // Remove any extra spaces left after replacement
         }
 
-            $i = 0;   
+
+        $count = count($data);
+        $i = 0;
+
         @endphp
-        @foreach ($data as $index => $d)
+            @foreach ($data as $index => $d)
         @php
             $i++;
         @endphp
             <div class="recipient">
-                <p><strong>{{ $d->memberName }}</strong></p>
-                <p>{{ removed($d->presentAddress) }}</p>
+                <p><strong>{{ $d->first_name }}</strong></p>
+                {{-- <p>{{ removed($d->presentAddress) }}</p> --}}
+                <p>{{ $d->home_address_line_1 }}</p>
             </div>
 
-            @if ($i == 18) 
-                @php
-                    $i = 0;
-                @endphp
+            @if($count > $i)
                 <div class="page-break"></div> 
             @endif
         @endforeach

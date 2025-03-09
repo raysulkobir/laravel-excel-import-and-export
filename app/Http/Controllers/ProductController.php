@@ -9,12 +9,26 @@ use Illuminate\Support\Facades\DB;
 class ProductController extends Controller
 {
 
-    public function letter(){
-        $data = DB::table('supreem_court_bar_association')
-            ->offset(0) 
-            ->limit(16)
-            ->get();
 
+    //TODO supreem_court_bar_association 
+    // supreem_court_bar_association
+    // 0- 1250
+
+    //TODO dhaka_university_accounting_alumni
+    // 0-840
+
+    //TODO Army Golf Club, Dhaka 2021
+    // 0-1000
+    // SELECT * FROM `contacts` WHERE directory_id = 22 and home_address_line_1 != '';
+    // SELECT * FROM `contacts` WHERE directory_id = 22 AND (home_address_line_1 IS NULL OR home_address_line_1 = '');
+
+    public function letter(){
+        $data = DB::table('contacts')
+            ->where('directory_id', 22)
+            ->where('home_address_line_1', '!=', '')
+            ->whereBetween('id', [1, 1000]) 
+            ->get();
+        // return $data;
         return view('letter', compact('data'));
     }
     /**
