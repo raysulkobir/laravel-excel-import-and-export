@@ -29,12 +29,16 @@ class MasterController extends Controller
     public function importProduct(Request $request)
     {
         // $jsonFilePath = public_path('db/supreem_court_bar_association.json');
-        $jsonFilePath = public_path('db/institute_of_engineers.json');
+        // $jsonFilePath = public_path('db/institute_of_engineers.json');
         // $jsonFilePath = public_path('db/chittrong-district-bar-association.json');
         // $jsonFilePath = public_path('db/Bangladesh-Association-of-Publicly-Listed-Companies-(BAPLC).json');
         // $jsonFilePath = public_path('db/Bangladesh-college-of-physician-and-surgeons.json');
         // $jsonFilePath = public_path('db/dhaka-university-accounting-alumni1.json');
         // $jsonFilePath = public_path('db/economist_association.json');
+        // $jsonFilePath = public_path('db/bma_members.json');
+        // $jsonFilePath = public_path('db/bma_life_members.json');
+
+        $jsonFilePath = public_path('db/Amena_Nurse_Leads_2025-03-08_2025-03-10.json');
  
  
 
@@ -51,16 +55,147 @@ class MasterController extends Controller
 
         // Return JSON response
         // return $this->supreem_court_bar_association($data);
-        return $this->institute_of_engineers($data);
+        // return $this->institute_of_engin eers($data);
         // return $this->chittrong_district_bar_association($data);
         // return $this->bangladesh_Association_of_Publicly_Listed_Companies($data['Sheet1']);
         // return $this->Bangladesh_college_of_physician_and_surgeons($data);
         // return $this->dhaka_university_accounting_alumni($data);
         // return $this->economist_association($data);
+        // return $data['data'];
+        // return $this->bma_members($data['data']);
+        // return $this->bma_life_members($data['data']);
+        return $this->Amena_Nurse_Leads($data);
         // return $data;
     }
 
 
+
+    public function Amena_Nurse_Leads($data)
+    {
+        // return $data;
+        // Begin a database transaction
+        DB::beginTransaction();
+
+        try {
+            $chunkSize = 100;
+            $chunks = array_chunk($data, $chunkSize);
+
+            foreach ($chunks as $chunk) {
+                $insertData = [];
+
+                foreach ($chunk as $d) {
+                    $insertData[] = [
+                        'type' => 'Amena_Nurse_Leads',
+                 
+                        'created_time' => @$d['created_time'],
+                        'blood_group' => @$d['blood_group'],
+                        'full_name' => @$d['full_name'],
+                        'email' => @$d['email'],
+                        'phone_number' => @$d['phone_number'],
+                        'date_of_birth' => @$d['date_of_birth'],
+                        'gender' => @$d['gender'],
+                    ];
+
+                }
+                // return $insertData;
+                Product::insert($insertData);  // Bulk insert
+            }
+
+            // Commit the transaction
+            DB::commit();
+        } catch (\Exception $e) {
+            // Rollback the transaction if something goes wrong
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+
+        return "okdd";
+    }
+
+    public function bma_life_members($data)
+    {
+        // return $data;
+        // Begin a database transaction
+        DB::beginTransaction();
+
+        try {
+            $chunkSize = 100;
+            $chunks = array_chunk($data, $chunkSize);
+
+            foreach ($chunks as $chunk) {
+                $insertData = [];
+
+                foreach ($chunk as $d) {
+                    $insertData[] = [
+                        'type' => 'bma_members',
+                 
+                        'member_id' => @$d['member_id'],
+                        'division_name' => @$d['division_name'],
+                        'branch_name' => @$d['branch_name'],
+                        'membership_number' => @$d['membership_number'],
+                        'mobile' => @$d['mobile'],
+                        'member_status' => @$d['member_status'],
+                        'member_photo' => @$d['member_photo'],
+                    ];
+
+                }
+                // return $insertData;
+                Product::insert($insertData);  // Bulk insert
+            }
+
+            // Commit the transaction
+            DB::commit();
+        } catch (\Exception $e) {
+            // Rollback the transaction if something goes wrong
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+
+        return "okdd";
+    }
+
+    public function bma_members($data)
+    {
+        // return $data;
+        // Begin a database transaction
+        DB::beginTransaction();
+
+        try {
+            $chunkSize = 100;
+            $chunks = array_chunk($data, $chunkSize);
+
+            foreach ($chunks as $chunk) {
+                $insertData = [];
+
+                foreach ($chunk as $d) {
+                    $insertData[] = [
+                        'type' => 'bma_members',
+                 
+                        'member_id' => @$d['member_id'],
+                        'division_name' => @$d['division_name'],
+                        'member_name' => @$d['member_name'],
+                        'branch_name' => @$d['branch_name'],
+                        'membership_number' => @$d['membership_number'],
+                        'mobile' => @$d['mobile'],
+                        'member_status' => @$d['member_status'],
+                        'member_photo' => @$d['member_photo'],
+                    ];
+
+                }
+                // return $insertData;
+                Product::insert($insertData);  // Bulk insert
+            }
+
+            // Commit the transaction
+            DB::commit();
+        } catch (\Exception $e) {
+            // Rollback the transaction if something goes wrong
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+
+        return "okdd";
+    }
 
     public function economist_association($data)
     {

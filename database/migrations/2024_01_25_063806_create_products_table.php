@@ -40,16 +40,16 @@ return new class extends Migration
             // $table->string('chamberStatus')->nullable();
 
             //TODO institute_of_engineers
-            $table->string('name')->nullable();
-            $table->text('address')->nullable();
-            $table->text('imageSrc')->nullable();
-            $table->string('email')->nullable();
-            $table->string('division')->nullable();
-            $table->string('center')->nullable();
-            $table->string('institution')->nullable();
-            $table->string('passingYear')->nullable();
-            $table->string('membershipNo')->nullable();
-            $table->string('mobile')->nullable();
+            // $table->string('name')->nullable();
+            // $table->text('address')->nullable();
+            // $table->text('imageSrc')->nullable();
+            // $table->string('email')->nullable();
+            // $table->string('division')->nullable();
+            // $table->string('center')->nullable();
+            // $table->string('institution')->nullable();
+            // $table->string('passingYear')->nullable();
+            // $table->string('membershipNo')->nullable();
+            // $table->string('mobile')->nullable();
 
 
             //TODO chittrong_district_bar_association
@@ -142,7 +142,27 @@ return new class extends Migration
             // $table->string('E-mail ID')->nullable();
             // $table->string('Education')->nullable();
 
+            // bma_members
 
+
+            // $table->string('member_id')->nullable();
+            // $table->string('division_name')->nullable();
+            // $table->string('branch_name')->nullable();
+            // $table->string('member_name')->nullable();
+            // $table->string('membership_number')->nullable();
+            // $table->string('mobile')->nullable();
+            // $table->string('member_status')->nullable();
+            // $table->string('member_photo')->nullable();
+
+
+            //TODO Amena_Nurse_Leads
+            $table->string('created_time')->nullable();
+            $table->string('blood_group')->nullable();
+            $table->string('full_name')->nullable();
+            $table->string('email')->nullable();
+            $table->string('phone_number')->nullable();
+            $table->string('date_of_birth')->nullable();
+            $table->string('gender')->nullable();
 
             $table->timestamps();
         });

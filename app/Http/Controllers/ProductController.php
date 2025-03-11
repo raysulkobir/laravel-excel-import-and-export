@@ -19,6 +19,8 @@ class ProductController extends Controller
 
     //TODO Army Golf Club, Dhaka 2021
     // 0-1000
+    // 1000-1300
+    // 5000
     // SELECT * FROM `contacts` WHERE directory_id = 22 and home_address_line_1 != '';
     // SELECT * FROM `contacts` WHERE directory_id = 22 AND (home_address_line_1 IS NULL OR home_address_line_1 = '');
 
@@ -26,7 +28,7 @@ class ProductController extends Controller
         $data = DB::table('contacts')
             ->where('directory_id', 22)
             ->where('home_address_line_1', '!=', '')
-            ->whereBetween('id', [1, 1000]) 
+            ->whereBetween('id', [5401, 20000]) 
             ->get();
         // return $data;
         return view('letter', compact('data'));
